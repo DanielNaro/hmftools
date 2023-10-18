@@ -1,9 +1,7 @@
 package com.hartwig.hmftools.common.genome.refgenome;
 
-import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion.V37;
-import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion.V38;
-
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion.*;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -48,5 +46,31 @@ public class RefGenomeVersionTest
     public void cannotHandlePathWithJustGzipExtension()
     {
         RefGenomeVersion.V37.addVersionToFilePath("path.gz");
+    }
+
+    @Test
+    public void testFrom() {
+        assertEquals(Integer.toString(37), V37.identifier());
+        assertEquals(Integer.toString(38), V38.identifier());
+    }
+
+    @Test
+    public void testTestFrom() {
+        assertEquals(Integer.toString(37),
+                RefGenomeVersion.from("37").identifier());
+        assertEquals(Integer.toString(38),
+                RefGenomeVersion.from("38").identifier());
+    }
+
+    @Test
+    public void testIs37() {
+        assertTrue(V37.is37());
+        assertFalse(V37.is38());
+    }
+
+    @Test
+    public void testIs38() {
+        assertFalse(V38.is37());
+        assertTrue(V38.is38());
     }
 }
