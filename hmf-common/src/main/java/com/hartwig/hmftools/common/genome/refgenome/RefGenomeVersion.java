@@ -1,19 +1,44 @@
 package com.hartwig.hmftools.common.genome.refgenome;
 
+import com.hartwig.hmftools.common.immune.ImmuneRegionInterface;
+import com.hartwig.hmftools.common.immune.ImmuneRegion_V37;
+import com.hartwig.hmftools.common.immune.ImmuneRegion_V38;
+import com.hartwig.hmftools.common.region.ExcludedRegionsInterface;
+import com.hartwig.hmftools.common.region.ExcludedRegionsInterfaceImpl37;
+import com.hartwig.hmftools.common.region.ExcludedRegionsInterfaceImpl38;
 import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public enum RefGenomeVersion
 {
-    V37("37", new RefChrNameCorrectorStripChrPrefix()),
-    V38("38", new RefChrNameCorrectorEnforceChrPrefix());
+    V37(
+            "37",
+            new RefChrNameCorrectorStripChrPrefix(),
+            new ExcludedRegionsInterfaceImpl37(),
+            new ImmuneRegion_V37()
+    ),
+    V38(
+            "38",
+            new RefChrNameCorrectorEnforceChrPrefix(),
+            new ExcludedRegionsInterfaceImpl38(),
+            new ImmuneRegion_V38()
+    );
 
     @NotNull
     private final String mIdentifier;
     private final RefChrNameCorrectorInterface chrNameCorrector;
+    private final ImmuneRegionInterface immuneRegions;
+
+    public ExcludedRegionsInterface getExcludedRegionsInterface() {
+        return excludedRegionsInterface;
+    }
+
+    public ImmuneRegionInterface getImmuneRegions() {
+        return immuneRegions;
+    }
+    private final ExcludedRegionsInterface excludedRegionsInterface;
 
     // config option
     public static final String REF_GENOME_VERSION = "ref_genome_version";
@@ -51,10 +76,14 @@ public enum RefGenomeVersion
     }
 
     RefGenomeVersion(@NotNull final String identifier,
-                     RefChrNameCorrectorInterface chrNameCorrector)
+                     RefChrNameCorrectorInterface chrNameCorrector,
+                     ExcludedRegionsInterface excludedRegionsInterface,
+                     ImmuneRegionInterface immuneRegions)
     {
         mIdentifier = identifier;
         this.chrNameCorrector = chrNameCorrector;
+        this.excludedRegionsInterface = excludedRegionsInterface;
+        this.immuneRegions = immuneRegions;
     }
 
     public boolean is37() { return stringVersionIs37(mIdentifier); }
