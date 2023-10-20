@@ -37,19 +37,7 @@ object IgTcrGeneFile
 
     fun read(refGenomeVersion: RefGenomeVersion) : List<IgTcrGene>
     {
-        val resourcePath: String = if (refGenomeVersion.is37)
-        {
-            "igtcr_gene.37.tsv"
-        }
-        else if (refGenomeVersion.is38)
-        {
-            "igtcr_gene.38.tsv"
-        }
-        else
-        {
-            sLogger.error("unknown ref genome version: {}", refGenomeVersion)
-            throw IllegalArgumentException("unknown ref genome version: $refGenomeVersion")
-        }
+        val resourcePath: String = getResourcePath(refGenomeVersion)
 
         val igTcrGenes = ArrayList<IgTcrGene>()
 
@@ -119,6 +107,10 @@ object IgTcrGeneFile
         }
 
         return igTcrGenes
+    }
+
+    fun getResourcePath(refGenomeVersion: RefGenomeVersion): String {
+        return refGenomeVersion.igtcr_genePath
     }
 
     fun write(tsvPath: String, geneList: List<IgTcrGene>)

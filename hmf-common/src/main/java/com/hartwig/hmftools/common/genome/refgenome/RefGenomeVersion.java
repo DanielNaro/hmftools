@@ -18,21 +18,27 @@ public enum RefGenomeVersion
             new RefChrNameCorrectorStripChrPrefix(),
             new ExcludedRegionsInterfaceImpl37(),
             new ImmuneRegion_V37(),
-            RefGenomeCoordinates.COORDS_37
-    ),
+            RefGenomeCoordinates.COORDS_37,
+            "igtcr_gene.37.tsv"),
     V38(
             "38",
             new RefChrNameCorrectorEnforceChrPrefix(),
             new ExcludedRegionsInterfaceImpl38(),
             new ImmuneRegion_V38(),
-            RefGenomeCoordinates.COORDS_38
-    );
+            RefGenomeCoordinates.COORDS_38,
+            "igtcr_gene.38.tsv");
 
     @NotNull
     private final String mIdentifier;
     private final RefChrNameCorrectorInterface chrNameCorrector;
     private final ImmuneRegionInterface immuneRegions;
     private final RefGenomeCoordinates refGenomeCoordinates;
+
+    public String getIgtcr_genePath() {
+        return igtcr_genePath;
+    }
+
+    private final String igtcr_genePath;
 
     public ExcludedRegionsInterface getExcludedRegionsInterface() {
         return excludedRegionsInterface;
@@ -81,13 +87,14 @@ public enum RefGenomeVersion
     RefGenomeVersion(@NotNull final String identifier,
                      RefChrNameCorrectorInterface chrNameCorrector,
                      ExcludedRegionsInterface excludedRegionsInterface,
-                     ImmuneRegionInterface immuneRegions, RefGenomeCoordinates refGenomeCoordinates)
+                     ImmuneRegionInterface immuneRegions, RefGenomeCoordinates refGenomeCoordinates, String igtcrGenePath)
     {
         mIdentifier = identifier;
         this.chrNameCorrector = chrNameCorrector;
         this.excludedRegionsInterface = excludedRegionsInterface;
         this.immuneRegions = immuneRegions;
         this.refGenomeCoordinates = refGenomeCoordinates;
+        igtcr_genePath = igtcrGenePath;
     }
 
     public boolean is37() { return stringVersionIs37(mIdentifier); }

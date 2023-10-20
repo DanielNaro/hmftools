@@ -1,34 +1,20 @@
 package com.hartwig.hmftools.wisp;
 
-import static com.hartwig.hmftools.common.test.GeneTestUtils.CHR_1;
-import static com.hartwig.hmftools.common.test.MockRefGenome.getNextBase;
-import static com.hartwig.hmftools.common.variant.impact.VariantImpactSerialiser.writeImpactDetails;
-import static com.hartwig.hmftools.wisp.TestUtils.DEFAULT_QUAL;
-import static com.hartwig.hmftools.wisp.TestUtils.MOCK_REF_GENOME;
-import static com.hartwig.hmftools.wisp.TestUtils.REF_BASES_CHR_1;
-import static com.hartwig.hmftools.wisp.TestUtils.TEST_CONFIG;
-import static com.hartwig.hmftools.wisp.TestUtils.TEST_REF_ID;
-import static com.hartwig.hmftools.wisp.TestUtils.TEST_SAMPLE_ID;
-
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hartwig.hmftools.common.variant.CodingEffect;
 import com.hartwig.hmftools.common.variant.impact.VariantImpact;
 import com.hartwig.hmftools.wisp.probe.SomaticMutation;
-
+import htsjdk.variant.variantcontext.*;
 import org.junit.Test;
 
-import htsjdk.variant.variantcontext.Allele;
-import htsjdk.variant.variantcontext.Genotype;
-import htsjdk.variant.variantcontext.GenotypeBuilder;
-import htsjdk.variant.variantcontext.GenotypesContext;
-import htsjdk.variant.variantcontext.VariantContext;
-import htsjdk.variant.variantcontext.VariantContextBuilder;
+import java.util.List;
+import java.util.Map;
+
+import static com.hartwig.hmftools.common.test.GeneTestUtils.CHR_1;
+import static com.hartwig.hmftools.common.variant.impact.VariantImpactSerialiser.writeImpactDetails;
+import static com.hartwig.hmftools.wisp.TestUtils.*;
+import static org.junit.Assert.assertEquals;
 
 public class PointMutationTest
 {
