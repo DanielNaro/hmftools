@@ -120,7 +120,7 @@ public class VisualiserConfig
             throw new IOException("Unable to write to data directory " + OutputConfPath);
         }
 
-        RefGenomeCoords = RefGenVersion == V37 ? RefGenomeCoordinates.COORDS_37 : RefGenomeCoordinates.COORDS_38;
+        RefGenomeCoords = RefGenVersion.getRefGenomeCoordinates();
         Highlights.populateKnownSites(RefGenVersion);
 
         Threads = parseThreads(configBuilder);

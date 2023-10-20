@@ -111,7 +111,8 @@ public class UnmappableRegionsCalculator
         if(partitionSize < 1)
             throw new Exception("`partitionSize` must be >=1");
 
-        RefGenomeCoordinates refGenomeCoords = mRefGenomeVersion == V37 ? RefGenomeCoordinates.COORDS_37 : RefGenomeCoordinates.COORDS_38;
+        RefGenomeCoordinates refGenomeCoords =
+                mRefGenomeVersion.getRefGenomeCoordinates();
         int chromosomeLength = refGenomeCoords.length(stripChrPrefix(chromosome));
 
         ArrayList<Integer> startPositions = new ArrayList<>();

@@ -245,7 +245,7 @@ public class CommonUtils
 
     public static long getChromosomeLength(final String chromosome, final RefGenomeVersion version)
     {
-        final RefGenomeCoordinates coords = version == V37 ? RefGenomeCoordinates.COORDS_37 : RefGenomeCoordinates.COORDS_38;
+        final RefGenomeCoordinates coords = version.getRefGenomeCoordinates();
         return coords.length(chromosome);
     }
 }

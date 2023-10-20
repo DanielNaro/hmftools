@@ -122,7 +122,8 @@ public class ChromosomeTask
             return partitions;
         }
 
-        RefGenomeCoordinates refGenomeCoords = mConfig.RefGenVersion == V37 ? RefGenomeCoordinates.COORDS_37 : RefGenomeCoordinates.COORDS_38;
+        RefGenomeCoordinates refGenomeCoords =
+                mConfig.RefGenVersion.getRefGenomeCoordinates();
         int chromosomeLength = refGenomeCoords.length(stripChrPrefix(chromosome));
         return partition(chromosome, 1, chromosomeLength);
     }

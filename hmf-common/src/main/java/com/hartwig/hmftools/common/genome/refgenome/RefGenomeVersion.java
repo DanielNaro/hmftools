@@ -17,19 +17,22 @@ public enum RefGenomeVersion
             "37",
             new RefChrNameCorrectorStripChrPrefix(),
             new ExcludedRegionsInterfaceImpl37(),
-            new ImmuneRegion_V37()
+            new ImmuneRegion_V37(),
+            RefGenomeCoordinates.COORDS_37
     ),
     V38(
             "38",
             new RefChrNameCorrectorEnforceChrPrefix(),
             new ExcludedRegionsInterfaceImpl38(),
-            new ImmuneRegion_V38()
+            new ImmuneRegion_V38(),
+            RefGenomeCoordinates.COORDS_38
     );
 
     @NotNull
     private final String mIdentifier;
     private final RefChrNameCorrectorInterface chrNameCorrector;
     private final ImmuneRegionInterface immuneRegions;
+    private final RefGenomeCoordinates refGenomeCoordinates;
 
     public ExcludedRegionsInterface getExcludedRegionsInterface() {
         return excludedRegionsInterface;
@@ -78,12 +81,13 @@ public enum RefGenomeVersion
     RefGenomeVersion(@NotNull final String identifier,
                      RefChrNameCorrectorInterface chrNameCorrector,
                      ExcludedRegionsInterface excludedRegionsInterface,
-                     ImmuneRegionInterface immuneRegions)
+                     ImmuneRegionInterface immuneRegions, RefGenomeCoordinates refGenomeCoordinates)
     {
         mIdentifier = identifier;
         this.chrNameCorrector = chrNameCorrector;
         this.excludedRegionsInterface = excludedRegionsInterface;
         this.immuneRegions = immuneRegions;
+        this.refGenomeCoordinates = refGenomeCoordinates;
     }
 
     public boolean is37() { return stringVersionIs37(mIdentifier); }
@@ -124,5 +128,9 @@ public enum RefGenomeVersion
         }
 
         return versionedFilePath;
+    }
+
+    public RefGenomeCoordinates getRefGenomeCoordinates() {
+        return refGenomeCoordinates;
     }
 }

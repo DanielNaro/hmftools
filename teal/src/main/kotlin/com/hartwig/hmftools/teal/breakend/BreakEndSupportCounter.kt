@@ -26,9 +26,7 @@ class BreakEndSupportCounter(refGenomeVersion: RefGenomeVersion, telomereMatchTh
 
     private val mTelomereMatchThreshold = telomereMatchThreshold
     private val mMinTelomereMatchLength = 12
-    private val mRefGenomeCoordinates = when (refGenomeVersion) {
-                                            RefGenomeVersion.V37 -> RefGenomeCoordinates.COORDS_37
-                                            RefGenomeVersion.V38 -> RefGenomeCoordinates.COORDS_38 }
+    private val mRefGenomeCoordinates = refGenomeVersion.refGenomeCoordinates
 
     private fun matchesTelomere(seq: String, gRich: Boolean): Boolean
     {

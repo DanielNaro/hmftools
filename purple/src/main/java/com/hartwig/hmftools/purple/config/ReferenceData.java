@@ -246,7 +246,8 @@ public class ReferenceData
 
     private void setChromosomeCoords()
     {
-        RefGenomeCoordinates coordinates = RefGenVersion == V37 ? RefGenomeCoordinates.COORDS_37 : RefGenomeCoordinates.COORDS_38;
+        RefGenomeCoordinates coordinates =
+                RefGenVersion.getRefGenomeCoordinates();
 
         for(HumanChromosome chromosome : HumanChromosome.values())
         {

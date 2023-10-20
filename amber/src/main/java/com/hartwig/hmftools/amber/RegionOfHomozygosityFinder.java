@@ -220,20 +220,7 @@ public class RegionOfHomozygosityFinder
         List<GenomeRegion> excludedRegions = AmberUtils.loadBedFromResource(resourcePath);
 
         // now add all of the centromere
-        RefGenomeCoordinates refCcoord;
-
-        switch (mRefGenomeVersion)
-        {
-            case V37:
-                refCcoord = RefGenomeCoordinates.COORDS_37;
-                break;
-            case V38:
-                refCcoord = RefGenomeCoordinates.COORDS_38;
-                break;
-            default:
-                refCcoord = RefGenomeCoordinates.COORDS_37;
-                break;
-        }
+        RefGenomeCoordinates refCcoord = mRefGenomeVersion.getRefGenomeCoordinates();
 
         for(Map.Entry<Chromosome, Integer> e : refCcoord.Centromeres.entrySet())
         {

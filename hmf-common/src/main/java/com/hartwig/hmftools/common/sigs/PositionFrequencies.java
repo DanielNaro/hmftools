@@ -9,8 +9,12 @@ import static com.hartwig.hmftools.common.utils.file.FileWriterUtils.createBuffe
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+import com.google.common.collect.Interner;
 import com.google.common.collect.Maps;
 import com.hartwig.hmftools.common.genome.chromosome.HumanChromosome;
 import com.hartwig.hmftools.common.genome.refgenome.RefGenomeCoordinates;
@@ -112,21 +116,31 @@ public class PositionFrequencies
 
     public static Map<String,Integer> buildStandardChromosomeLengths(final RefGenomeVersion refGenomeVersion)
     {
-        final Map<String,Integer> chromosomeLengths = Maps.newHashMap();
+        if (refGenomeVersion.identifier().compareTo(RefGenomeVersion.V37.identifier())!=0){
+            Map<String, Integer> result = new HashMap<>();
+            refGenomeVersion.getRefGenomeCoordinates().Lengths.forEach((chromosome, integer) -> {
+                result.put(
+                    refGenomeVersion.versionedChromosome(chromosome.toString()),
+                    integer
+                );
+            });
+            return result;
+        }
+        return maxLengthPerChromosome(refGenomeVersion);
+    }
 
-        final RefGenomeCoordinates refGenome37 = RefGenomeCoordinates.COORDS_37;
-        final RefGenomeCoordinates refGenome38 = RefGenomeCoordinates.COORDS_38;
+    private static Map<String, Integer> maxLengthPerChromosome(final RefGenomeVersion refGenomeVersion) {
+        final Map<String,Integer> chromosomeLengths = Maps.newHashMap();
 
         for(HumanChromosome chromosome : HumanChromosome.values())
         {
+            int chromosome_length = Arrays.stream(RefGenomeVersion.values())
+                    .map(
+                            refGenomeVersion1 -> refGenomeVersion1.getRefGenomeCoordinates().length(chromosome.toString())
+                    ).max(Integer::compareTo).get();
             final String chrStr = refGenomeVersion.versionedChromosome(chromosome.toString());
 
-            // NOTE: ref data 016 and earlier for v37 were constructed using the max chromosome length across both ref genome versions
-            // so continue this for backwards compatibility until the next major ref data regeneration (or alternative approach)
-            int v38Length = refGenome38.lengths().get(chromosome);
-
-            int length = refGenomeVersion.is37() ? max(refGenome37.lengths().get(chromosome), v38Length) : v38Length;
-            chromosomeLengths.put(chrStr, length);
+            chromosomeLengths.put(chrStr, chromosome_length);
         }
 
         return chromosomeLengths;

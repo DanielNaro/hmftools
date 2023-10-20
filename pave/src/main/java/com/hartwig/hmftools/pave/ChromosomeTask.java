@@ -86,7 +86,8 @@ public class ChromosomeTask implements Callable
         mStandardPon = mReferenceData.StandardPon.getChromosomeCache(mChromosomeStr);
         mArtefactsPon = mReferenceData.ArtefactsPon.getChromosomeCache(mChromosomeStr);
 
-        RefGenomeCoordinates coordinates = mConfig.RefGenVersion.is37() ? RefGenomeCoordinates.COORDS_37 : RefGenomeCoordinates.COORDS_38;
+        RefGenomeCoordinates coordinates =
+                mConfig.RefGenVersion.getRefGenomeCoordinates();
         ChrBaseRegion chrRegion = new ChrBaseRegion(mChromosomeStr, 1, coordinates.Lengths.get(mChromosome));
 
         PV_LOGGER.debug("chr({}) starting variant annotation", mChromosome);

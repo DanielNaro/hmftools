@@ -34,7 +34,7 @@ public final class SvUtilities {
 
     public static RefGenomeCoordinates refGenomeLengths()
     {
-        return REF_GENOME_VERSION == RefGenomeVersion.V38 ? RefGenomeCoordinates.COORDS_38 : RefGenomeCoordinates.COORDS_37;
+        return REF_GENOME_VERSION.getRefGenomeCoordinates();
     }
 
     public static int getChromosomeLength(final String chromosome)
