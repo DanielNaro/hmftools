@@ -66,8 +66,13 @@ public class LoadCanonicalTranscripts
 
         LOGGER.info("Loading {} canonical transcripts to database for refGenome({})", geneDataList.size(), refGenomeVersion);
 
-        String refGenomeStr = refGenomeVersion.is37() ? "GRCh37" : "GRCh38";
+        String refGenomeStr = getRefGenomeStr(refGenomeVersion);
         dbAccess.writeCanonicalTranscripts(refGenomeStr, geneDataList, transDataList);
+    }
+
+    @NotNull
+    static String getRefGenomeStr(RefGenomeVersion refGenomeVersion) {
+        return refGenomeVersion.is37() ? "GRCh37" : "GRCh38";
     }
 
     @NotNull
