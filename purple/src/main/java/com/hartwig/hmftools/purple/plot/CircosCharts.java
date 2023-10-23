@@ -21,6 +21,7 @@ import com.hartwig.hmftools.common.circos.CircosINDELWriter;
 import com.hartwig.hmftools.common.circos.CircosLinkWriter;
 import com.hartwig.hmftools.common.circos.CircosSNPWriter;
 import com.hartwig.hmftools.common.genome.chromosome.HumanChromosome;
+import com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion;
 import com.hartwig.hmftools.common.purple.GermlineStatus;
 import com.hartwig.hmftools.common.purple.PurpleCopyNumber;
 import com.hartwig.hmftools.common.purple.Gender;
@@ -43,18 +44,18 @@ public class CircosCharts
 
     private final ExecutorService mExecutorService;
     private final ChartConfig mConfig;
-    private final boolean mIsHg38;
+    private final RefGenomeVersion refGenomeVersion;
 
     private String mCurrentSampleId;
     private String mCurrentReferenceId;
     private String mBaseCircosTumorSample;
     private String mBaseCircosReferenceSample;
 
-    public CircosCharts(final PurpleConfig configSupplier, final ExecutorService executorService, boolean isHg38)
+    public CircosCharts(final PurpleConfig configSupplier, final ExecutorService executorService, RefGenomeVersion refGenomeVersion)
     {
         mConfig = configSupplier.Charting;
         mExecutorService = executorService;
-        mIsHg38 = isHg38;
+        this.refGenomeVersion = refGenomeVersion;
     }
 
     public void write(
@@ -154,13 +155,17 @@ public class CircosCharts
     {
         writeConfig(gender, "circos");
         writeConfig(gender, "input");
-        if(mIsHg38)
+        copyResourceToCircos(getCircosGapsPath(refGenomeVersion), "gaps.txt");
+    }
+
+    static String getCircosGapsPath(RefGenomeVersion refGenomeVersion) {
+        if(refGenomeVersion.is38())
         {
-            copyResourceToCircos("gaps.38.txt", "gaps.txt");
+            return "gaps.38.txt";
         }
         else
         {
-            copyResourceToCircos("gaps.37.txt", "gaps.txt");
+            return "gaps.37.txt";
         }
     }
 
@@ -175,9 +180,14 @@ public class CircosCharts
         content = content.replaceAll("COBALT_REF_COLOUR", mCurrentReferenceId != null ? "green" : "cobalt");
 
         content = content.replaceAll("EXCLUDE", gender.equals(Gender.FEMALE) ? "hsY" : "hsZ");
-        content = content.replaceAll("KARYOTYPE",
-                mIsHg38 ? "data/karyotype/karyotype.human.hg38.txt" : "data/karyotype/karyotype.human.hg19.txt");
+        content = content.replaceAll("KARYOTYPE", getKaryotypePath(refGenomeVersion));
         Files.write(new File(confFile(type)).toPath(), content.getBytes(charset));
+    }
+
+    @NotNull
+    public static String getKaryotypePath(RefGenomeVersion version) {
+        boolean mIsHg38 = version.is38();
+        return mIsHg38 ? "data/karyotype/karyotype.human.hg38.txt" : "data/karyotype/karyotype.human.hg19.txt";
     }
 
     private void copyResourceToCircos(final String inputName, final String outputName) throws IOException

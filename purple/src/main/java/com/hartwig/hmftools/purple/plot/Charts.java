@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 
 import com.google.common.collect.Lists;
 import com.hartwig.hmftools.common.amber.AmberBAF;
+import com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion;
 import com.hartwig.hmftools.common.purple.PurpleCopyNumber;
 import com.hartwig.hmftools.common.purple.Gender;
 import com.hartwig.hmftools.common.variant.VariantContextDecorator;
@@ -23,11 +24,13 @@ public class Charts
     private final PurpleConfig mConfig;
     private final CircosCharts mCircosCharts;
 
-    public Charts(final PurpleConfig config, final ExecutorService executorService, boolean isHg38) throws IOException
-    {
+    public Charts(final PurpleConfig config,
+                  final ExecutorService executorService,
+                  RefGenomeVersion refGenomeVersion) {
         mRCharts = new RCharts(config, executorService);
         mConfig = config;
-        mCircosCharts = config.Charting.CircosBinary != null ? new CircosCharts(config, executorService, isHg38) : null;
+        mCircosCharts = config.Charting.CircosBinary != null ?
+                new CircosCharts(config, executorService, refGenomeVersion) : null;
     }
 
     public void write(

@@ -1,25 +1,42 @@
 package com.hartwig.hmftools.purple;
 
-import static java.lang.String.format;
-
-import static com.hartwig.hmftools.common.purple.PurpleCommon.purpleGermlineSvFile;
-import static com.hartwig.hmftools.common.purple.PurpleCommon.purpleGermlineVcfFile;
-import static com.hartwig.hmftools.common.purple.PurpleCommon.purpleSomaticSvFile;
-import static com.hartwig.hmftools.common.purple.PurpleCommon.purpleSomaticVcfFile;
-import static com.hartwig.hmftools.common.purple.PurpleQCStatus.MAX_DELETED_GENES;
-import static com.hartwig.hmftools.common.purple.GeneCopyNumber.listToMap;
-import static com.hartwig.hmftools.common.utils.PerformanceCounter.runTimeMinsStr;
-import static com.hartwig.hmftools.common.utils.config.ConfigUtils.addLoggingOptions;
-import static com.hartwig.hmftools.common.utils.MemoryCalcs.calcMemoryUsage;
-import static com.hartwig.hmftools.purple.PurpleUtils.PPL_LOGGER;
-import static com.hartwig.hmftools.purple.PurpleSummaryData.createPurity;
-import static com.hartwig.hmftools.purple.segment.Segmentation.validateObservedRegions;
-import static com.hartwig.hmftools.purple.config.PurpleConstants.MAX_SOMATIC_FIT_DELETED_PERC;
-import static com.hartwig.hmftools.purple.config.PurpleConstants.TARGET_REGIONS_MAX_DELETED_GENES;
-import static com.hartwig.hmftools.purple.copynumber.PurpleCopyNumberFactory.calculateDeletedDepthWindows;
-import static com.hartwig.hmftools.purple.copynumber.PurpleCopyNumberFactory.validateCopyNumbers;
-import static com.hartwig.hmftools.purple.fitting.BestFitFactory.buildGermlineBestFit;
-import static com.hartwig.hmftools.purple.purity.FittedPurityFactory.createFittedRegionFactory;
+import com.beust.jcommander.internal.Sets;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.hartwig.hmftools.common.drivercatalog.AmplificationDrivers;
+import com.hartwig.hmftools.common.drivercatalog.DeletionDrivers;
+import com.hartwig.hmftools.common.drivercatalog.DriverCatalog;
+import com.hartwig.hmftools.common.drivercatalog.DriverCatalogFile;
+import com.hartwig.hmftools.common.genome.chromosome.Chromosome;
+import com.hartwig.hmftools.common.genome.chromosome.CobaltChromosomes;
+import com.hartwig.hmftools.common.purple.*;
+import com.hartwig.hmftools.common.sv.StructuralVariant;
+import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
+import com.hartwig.hmftools.common.utils.version.VersionInfo;
+import com.hartwig.hmftools.common.variant.hotspot.VariantHotspot;
+import com.hartwig.hmftools.purple.config.*;
+import com.hartwig.hmftools.purple.copynumber.PurpleCopyNumberFactory;
+import com.hartwig.hmftools.purple.fitting.BestFitFactory;
+import com.hartwig.hmftools.purple.fitting.PeakModelData;
+import com.hartwig.hmftools.purple.fitting.PeakModelFile;
+import com.hartwig.hmftools.purple.fitting.SomaticPurityFitter;
+import com.hartwig.hmftools.purple.gene.GeneCopyNumberBuilder;
+import com.hartwig.hmftools.purple.germline.GermlineDeletions;
+import com.hartwig.hmftools.purple.germline.GermlineDrivers;
+import com.hartwig.hmftools.purple.germline.GermlineSvCache;
+import com.hartwig.hmftools.purple.germline.GermlineVariants;
+import com.hartwig.hmftools.purple.plot.Charts;
+import com.hartwig.hmftools.purple.purity.FittedPurityFactory;
+import com.hartwig.hmftools.purple.purity.PurityAdjuster;
+import com.hartwig.hmftools.purple.purity.RegionFitCalculator;
+import com.hartwig.hmftools.purple.region.ObservedRegion;
+import com.hartwig.hmftools.purple.segment.SegmentFile;
+import com.hartwig.hmftools.purple.segment.Segmentation;
+import com.hartwig.hmftools.purple.somatic.*;
+import com.hartwig.hmftools.purple.sv.RecoverStructuralVariants;
+import com.hartwig.hmftools.purple.sv.SomaticSvCache;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,65 +48,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.beust.jcommander.internal.Sets;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.hartwig.hmftools.common.drivercatalog.AmplificationDrivers;
-import com.hartwig.hmftools.common.drivercatalog.DeletionDrivers;
-import com.hartwig.hmftools.common.drivercatalog.DriverCatalog;
-import com.hartwig.hmftools.common.drivercatalog.DriverCatalogFile;
-import com.hartwig.hmftools.common.genome.chromosome.Chromosome;
-import com.hartwig.hmftools.common.genome.chromosome.CobaltChromosomes;
-import com.hartwig.hmftools.common.purple.Gender;
-import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
-import com.hartwig.hmftools.purple.fitting.PeakModelData;
-import com.hartwig.hmftools.purple.fitting.SomaticPurityFitter;
-import com.hartwig.hmftools.purple.gene.GeneCopyNumberBuilder;
-import com.hartwig.hmftools.purple.plot.RChartData;
-import com.hartwig.hmftools.purple.purity.PurityAdjuster;
-import com.hartwig.hmftools.common.purple.PurpleQC;
-import com.hartwig.hmftools.common.purple.PurpleCopyNumber;
-import com.hartwig.hmftools.common.purple.PurpleCopyNumberFile;
-import com.hartwig.hmftools.common.purple.GeneCopyNumber;
-import com.hartwig.hmftools.common.purple.GeneCopyNumberFile;
-import com.hartwig.hmftools.common.purple.GermlineDeletion;
-import com.hartwig.hmftools.common.purple.BestFit;
-import com.hartwig.hmftools.common.purple.FittedPurity;
-import com.hartwig.hmftools.common.purple.FittedPurityRangeFile;
-import com.hartwig.hmftools.common.purple.PurityContext;
-import com.hartwig.hmftools.common.purple.PurityContextFile;
-import com.hartwig.hmftools.purple.purity.RegionFitCalculator;
-import com.hartwig.hmftools.purple.region.ObservedRegion;
-import com.hartwig.hmftools.purple.segment.SegmentFile;
-import com.hartwig.hmftools.common.utils.version.VersionInfo;
-import com.hartwig.hmftools.common.sv.StructuralVariant;
-import com.hartwig.hmftools.common.variant.hotspot.VariantHotspot;
-import com.hartwig.hmftools.purple.config.AmberData;
-import com.hartwig.hmftools.purple.config.CobaltData;
-import com.hartwig.hmftools.purple.config.PurpleConfig;
-import com.hartwig.hmftools.purple.config.ReferenceData;
-import com.hartwig.hmftools.purple.config.SampleData;
-import com.hartwig.hmftools.purple.config.SampleDataFiles;
-import com.hartwig.hmftools.purple.copynumber.PurpleCopyNumberFactory;
-import com.hartwig.hmftools.purple.germline.GermlineDeletions;
-import com.hartwig.hmftools.purple.germline.GermlineDrivers;
-import com.hartwig.hmftools.purple.fitting.BestFitFactory;
-import com.hartwig.hmftools.purple.fitting.PeakModelFile;
-import com.hartwig.hmftools.purple.germline.GermlineVariants;
-import com.hartwig.hmftools.purple.plot.Charts;
-import com.hartwig.hmftools.purple.purity.FittedPurityFactory;
-import com.hartwig.hmftools.purple.segment.Segmentation;
-import com.hartwig.hmftools.purple.sv.RecoverStructuralVariants;
-import com.hartwig.hmftools.purple.somatic.SomaticPeakStream;
-import com.hartwig.hmftools.purple.somatic.SomaticPurityEnrichment;
-import com.hartwig.hmftools.purple.somatic.SomaticStream;
-import com.hartwig.hmftools.purple.somatic.SomaticVariant;
-import com.hartwig.hmftools.purple.somatic.SomaticVariantCache;
-import com.hartwig.hmftools.purple.germline.GermlineSvCache;
-import com.hartwig.hmftools.purple.sv.SomaticSvCache;
-
-import org.jetbrains.annotations.Nullable;
+import static com.hartwig.hmftools.common.purple.GeneCopyNumber.listToMap;
+import static com.hartwig.hmftools.common.purple.PurpleCommon.*;
+import static com.hartwig.hmftools.common.purple.PurpleQCStatus.MAX_DELETED_GENES;
+import static com.hartwig.hmftools.common.utils.PerformanceCounter.runTimeMinsStr;
+import static com.hartwig.hmftools.common.utils.config.ConfigUtils.addLoggingOptions;
+import static com.hartwig.hmftools.purple.PurpleSummaryData.createPurity;
+import static com.hartwig.hmftools.purple.PurpleUtils.PPL_LOGGER;
+import static com.hartwig.hmftools.purple.config.PurpleConstants.MAX_SOMATIC_FIT_DELETED_PERC;
+import static com.hartwig.hmftools.purple.config.PurpleConstants.TARGET_REGIONS_MAX_DELETED_GENES;
+import static com.hartwig.hmftools.purple.copynumber.PurpleCopyNumberFactory.calculateDeletedDepthWindows;
+import static com.hartwig.hmftools.purple.copynumber.PurpleCopyNumberFactory.validateCopyNumbers;
+import static com.hartwig.hmftools.purple.fitting.BestFitFactory.buildGermlineBestFit;
+import static com.hartwig.hmftools.purple.purity.FittedPurityFactory.createFittedRegionFactory;
+import static com.hartwig.hmftools.purple.segment.Segmentation.validateObservedRegions;
+import static java.lang.String.format;
 
 public class PurpleApplication
 {
@@ -385,7 +358,7 @@ public class PurpleApplication
 
             try
             {
-                Charts charts = new Charts(mConfig, mExecutorService, mReferenceData.RefGenVersion.is38());
+                Charts charts = new Charts(mConfig, mExecutorService, mReferenceData.RefGenVersion);
 
                 charts.write(
                         referenceId, tumorId, !sampleDataFiles.SomaticVcfFile.isEmpty(),
