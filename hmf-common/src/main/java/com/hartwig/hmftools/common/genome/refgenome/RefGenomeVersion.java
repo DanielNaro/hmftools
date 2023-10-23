@@ -19,20 +19,27 @@ public enum RefGenomeVersion
             new ExcludedRegionsInterfaceImpl37(),
             new ImmuneRegion_V37(),
             RefGenomeCoordinates.COORDS_37,
-            "igtcr_gene.37.tsv"),
+            "igtcr_gene.37.tsv",
+            "gaps.37.txt",
+            "data/karyotype/karyotype.human.hg19.txt"
+            ),
     V38(
             "38",
             new RefChrNameCorrectorEnforceChrPrefix(),
             new ExcludedRegionsInterfaceImpl38(),
             new ImmuneRegion_V38(),
             RefGenomeCoordinates.COORDS_38,
-            "igtcr_gene.38.tsv");
+            "igtcr_gene.38.tsv",
+            "gaps.38.txt",
+            "data/karyotype/karyotype.human.hg38.txt");
 
     @NotNull
     private final String mIdentifier;
     private final RefChrNameCorrectorInterface chrNameCorrector;
     private final ImmuneRegionInterface immuneRegions;
     private final RefGenomeCoordinates refGenomeCoordinates;
+    private final String gapsPath;
+    private final String karyotypePath;
 
     public String getIgtcr_genePath() {
         return igtcr_genePath;
@@ -55,6 +62,7 @@ public enum RefGenomeVersion
 
     private static final Logger LOGGER = LogManager.getLogger(RefGenomeVersion.class);
     private static final String GZIP_EXTENSION = ".gz";
+
 
     private static boolean stringVersionIs37(@NotNull final String version){
         return version.equals(V37.toString()) || version.equals("37") || version.equals("HG37");
@@ -84,17 +92,27 @@ public enum RefGenomeVersion
         return configBuilder.hasValue(REF_GENOME_VERSION) ? RefGenomeVersion.from(configBuilder.getValue(REF_GENOME_VERSION)) : V37;
     }
 
+    public String getGapsPath() {
+        return gapsPath;
+    }
+
     RefGenomeVersion(@NotNull final String identifier,
                      RefChrNameCorrectorInterface chrNameCorrector,
                      ExcludedRegionsInterface excludedRegionsInterface,
-                     ImmuneRegionInterface immuneRegions, RefGenomeCoordinates refGenomeCoordinates, String igtcrGenePath)
+                     ImmuneRegionInterface immuneRegions,
+                     RefGenomeCoordinates refGenomeCoordinates,
+                     String igtcrGenePath,
+                     String gapsPath,
+                     String karyotypePath)
     {
         mIdentifier = identifier;
         this.chrNameCorrector = chrNameCorrector;
         this.excludedRegionsInterface = excludedRegionsInterface;
         this.immuneRegions = immuneRegions;
         this.refGenomeCoordinates = refGenomeCoordinates;
+        this.gapsPath = gapsPath;
         igtcr_genePath = igtcrGenePath;
+        this.karyotypePath = karyotypePath;
     }
 
     public boolean is37() { return stringVersionIs37(mIdentifier); }
@@ -139,5 +157,9 @@ public enum RefGenomeVersion
 
     public RefGenomeCoordinates getRefGenomeCoordinates() {
         return refGenomeCoordinates;
+    }
+
+    public String getKaryotypePath() {
+        return karyotypePath;
     }
 }

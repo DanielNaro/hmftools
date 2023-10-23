@@ -159,14 +159,7 @@ public class CircosCharts
     }
 
     static String getCircosGapsPath(RefGenomeVersion refGenomeVersion) {
-        if(refGenomeVersion.is38())
-        {
-            return "gaps.38.txt";
-        }
-        else
-        {
-            return "gaps.37.txt";
-        }
+        return refGenomeVersion.getGapsPath();
     }
 
     private void writeConfig(final Gender gender, final String type) throws IOException
@@ -186,8 +179,7 @@ public class CircosCharts
 
     @NotNull
     public static String getKaryotypePath(RefGenomeVersion version) {
-        boolean mIsHg38 = version.is38();
-        return mIsHg38 ? "data/karyotype/karyotype.human.hg38.txt" : "data/karyotype/karyotype.human.hg19.txt";
+        return version.getKaryotypePath();
     }
 
     private void copyResourceToCircos(final String inputName, final String outputName) throws IOException
