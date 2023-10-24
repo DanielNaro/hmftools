@@ -21,8 +21,8 @@ public enum RefGenomeVersion
             RefGenomeCoordinates.COORDS_37,
             "igtcr_gene.37.tsv",
             "gaps.37.txt",
-            "data/karyotype/karyotype.human.hg19.txt"
-            ),
+            "data/karyotype/karyotype.human.hg19.txt",
+            "GRCh37"),
     V38(
             "38",
             new RefChrNameCorrectorEnforceChrPrefix(),
@@ -31,7 +31,7 @@ public enum RefGenomeVersion
             RefGenomeCoordinates.COORDS_38,
             "igtcr_gene.38.tsv",
             "gaps.38.txt",
-            "data/karyotype/karyotype.human.hg38.txt");
+            "data/karyotype/karyotype.human.hg38.txt", "GRCh38");
 
     @NotNull
     private final String mIdentifier;
@@ -40,6 +40,8 @@ public enum RefGenomeVersion
     private final RefGenomeCoordinates refGenomeCoordinates;
     private final String gapsPath;
     private final String karyotypePath;
+
+    private final String refGenomeStr;
 
     public String getIgtcr_genePath() {
         return igtcr_genePath;
@@ -103,7 +105,7 @@ public enum RefGenomeVersion
                      RefGenomeCoordinates refGenomeCoordinates,
                      String igtcrGenePath,
                      String gapsPath,
-                     String karyotypePath)
+                     String karyotypePath, String refGenomeStr)
     {
         mIdentifier = identifier;
         this.chrNameCorrector = chrNameCorrector;
@@ -113,6 +115,7 @@ public enum RefGenomeVersion
         this.gapsPath = gapsPath;
         igtcr_genePath = igtcrGenePath;
         this.karyotypePath = karyotypePath;
+        this.refGenomeStr = refGenomeStr;
     }
 
     public boolean is37() { return stringVersionIs37(mIdentifier); }
@@ -161,5 +164,9 @@ public enum RefGenomeVersion
 
     public String getKaryotypePath() {
         return karyotypePath;
+    }
+
+    public String getRefGenomeStr() {
+        return refGenomeStr;
     }
 }

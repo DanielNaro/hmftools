@@ -72,7 +72,7 @@ public class LoadCanonicalTranscripts
 
     @NotNull
     static String getRefGenomeStr(RefGenomeVersion refGenomeVersion) {
-        return refGenomeVersion.is37() ? "GRCh37" : "GRCh38";
+        return refGenomeVersion.getRefGenomeStr();
     }
 
     @NotNull
