@@ -35,6 +35,7 @@ import com.hartwig.hmftools.lilac.hla.HlaAlleleCache;
 import com.hartwig.hmftools.lilac.read.Indel;
 import com.hartwig.hmftools.lilac.seq.HlaSequenceFile;
 import com.hartwig.hmftools.lilac.seq.HlaSequenceLoci;
+import org.jetbrains.annotations.NotNull;
 
 public class ReferenceData
 {
@@ -109,13 +110,18 @@ public class ReferenceData
     private static void setPonIndels(final RefGenomeVersion version)
     {
         // load indel PON
-        String refFile = version.is37() ? "/pon/indels_v37.csv" : "/pon/indels_v38.csv";
+        String refFile = getPonIndelsRefFile(version);
 
         final List<String> ponLines = new BufferedReader(new InputStreamReader(
                 ReferenceData.class.getResourceAsStream(refFile)))
                 .lines().collect(Collectors.toList());
 
         ponLines.stream().map(x -> Indel.fromString(x)).forEach(x -> INDEL_PON.add(x));
+    }
+
+    @NotNull
+    static String getPonIndelsRefFile(RefGenomeVersion version) {
+        return version.is37() ? "/pon/indels_v37.csv" : "/pon/indels_v38.csv";
     }
 
     private static void setKnownStopLossIndels(final RefGenomeVersion version)
