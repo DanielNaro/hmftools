@@ -22,7 +22,8 @@ public enum RefGenomeVersion
             "igtcr_gene.37.tsv",
             "gaps.37.txt",
             "data/karyotype/karyotype.human.hg19.txt",
-            "GRCh37"),
+            "GRCh37",
+            "/genome_unmappable_regions.37.bed"),
     V38(
             "38",
             new RefChrNameCorrectorEnforceChrPrefix(),
@@ -31,7 +32,9 @@ public enum RefGenomeVersion
             RefGenomeCoordinates.COORDS_38,
             "igtcr_gene.38.tsv",
             "gaps.38.txt",
-            "data/karyotype/karyotype.human.hg38.txt", "GRCh38");
+            "data/karyotype/karyotype.human.hg38.txt",
+            "GRCh38",
+            "/genome_unmappable_regions.38.bed");
 
     @NotNull
     private final String mIdentifier;
@@ -42,6 +45,7 @@ public enum RefGenomeVersion
     private final String karyotypePath;
 
     private final String refGenomeStr;
+    private final String unmappableRegionsFileName;
 
     public String getIgtcr_genePath() {
         return igtcr_genePath;
@@ -105,7 +109,7 @@ public enum RefGenomeVersion
                      RefGenomeCoordinates refGenomeCoordinates,
                      String igtcrGenePath,
                      String gapsPath,
-                     String karyotypePath, String refGenomeStr)
+                     String karyotypePath, String refGenomeStr, String unmappableRegionsFileName)
     {
         mIdentifier = identifier;
         this.chrNameCorrector = chrNameCorrector;
@@ -116,6 +120,7 @@ public enum RefGenomeVersion
         igtcr_genePath = igtcrGenePath;
         this.karyotypePath = karyotypePath;
         this.refGenomeStr = refGenomeStr;
+        this.unmappableRegionsFileName = unmappableRegionsFileName;
     }
 
     public boolean is37() { return stringVersionIs37(mIdentifier); }
@@ -168,5 +173,9 @@ public enum RefGenomeVersion
 
     public String getRefGenomeStr() {
         return refGenomeStr;
+    }
+
+    public String getUnmappableRegionsFileName() {
+        return unmappableRegionsFileName;
     }
 }

@@ -159,7 +159,7 @@ public class MetricsConfig
     }
 
     static String getUnmappableRegionsFileName(RefGenomeVersion refGenomeVersion) {
-        return refGenomeVersion.is37() ? "/genome_unmappable_regions.37.bed" : "/genome_unmappable_regions.38.bed";
+        return refGenomeVersion.getUnmappableRegionsFileName();
     }
 
     public String formFilename(final String fileType)
