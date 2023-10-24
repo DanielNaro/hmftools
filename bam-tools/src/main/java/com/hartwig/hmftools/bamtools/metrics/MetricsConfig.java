@@ -1,27 +1,15 @@
 package com.hartwig.hmftools.bamtools.metrics;
 
-import static com.hartwig.hmftools.bamtools.common.CommonUtils.BAM_FILE;
-import static com.hartwig.hmftools.bamtools.common.CommonUtils.BT_LOGGER;
-import static com.hartwig.hmftools.bamtools.common.CommonUtils.DEFAULT_CHR_PARTITION_SIZE;
-import static com.hartwig.hmftools.bamtools.common.CommonUtils.PARTITION_SIZE;
-import static com.hartwig.hmftools.bamtools.common.CommonUtils.REGIONS_FILE;
-import static com.hartwig.hmftools.bamtools.common.CommonUtils.addCommonCommandOptions;
-import static com.hartwig.hmftools.bamtools.common.CommonUtils.checkFileExists;
-import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeSource.REF_GENOME;
-import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion.V37;
-import static com.hartwig.hmftools.common.region.ChrBaseRegion.loadChrBaseRegions;
-import static com.hartwig.hmftools.common.utils.file.FileDelimiters.TSV_EXTENSION;
-import static com.hartwig.hmftools.common.utils.file.FileWriterUtils.OUTPUT_DIR;
-import static com.hartwig.hmftools.common.utils.file.FileWriterUtils.OUTPUT_ID;
-import static com.hartwig.hmftools.common.utils.file.FileWriterUtils.checkAddDirSeparator;
-import static com.hartwig.hmftools.common.utils.file.FileWriterUtils.parseOutputDir;
-import static com.hartwig.hmftools.common.utils.TaskExecutor.parseThreads;
-import static com.hartwig.hmftools.common.utils.config.CommonConfig.LOG_READ_IDS;
-import static com.hartwig.hmftools.common.utils.config.CommonConfig.LOG_READ_IDS_DESC;
-import static com.hartwig.hmftools.common.utils.config.CommonConfig.PERF_DEBUG;
-import static com.hartwig.hmftools.common.utils.config.CommonConfig.PERF_DEBUG_DESC;
-import static com.hartwig.hmftools.common.utils.config.CommonConfig.SAMPLE;
-import static com.hartwig.hmftools.common.utils.config.CommonConfig.parseLogReadIds;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.hartwig.hmftools.common.genome.bed.BedFileReader;
+import com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion;
+import com.hartwig.hmftools.common.metrics.BamMetricsSummary;
+import com.hartwig.hmftools.common.region.BaseRegion;
+import com.hartwig.hmftools.common.region.ChrBaseRegion;
+import com.hartwig.hmftools.common.region.SpecificRegions;
+import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -32,17 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.hartwig.hmftools.bamtools.common.CommonUtils;
-import com.hartwig.hmftools.common.genome.bed.BedFileReader;
-import com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion;
-import com.hartwig.hmftools.common.metrics.BamMetricsSummary;
-import com.hartwig.hmftools.common.region.BaseRegion;
-import com.hartwig.hmftools.common.region.SpecificRegions;
-import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
-import com.hartwig.hmftools.common.region.ChrBaseRegion;
+import static com.hartwig.hmftools.bamtools.common.CommonUtils.*;
+import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeSource.REF_GENOME;
+import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion.V37;
+import static com.hartwig.hmftools.common.region.ChrBaseRegion.loadChrBaseRegions;
+import static com.hartwig.hmftools.common.utils.TaskExecutor.parseThreads;
+import static com.hartwig.hmftools.common.utils.config.CommonConfig.*;
+import static com.hartwig.hmftools.common.utils.file.FileDelimiters.TSV_EXTENSION;
+import static com.hartwig.hmftools.common.utils.file.FileWriterUtils.*;
 
 public class MetricsConfig
 {
@@ -157,7 +142,7 @@ public class MetricsConfig
 
     private void loadUnmappableRegions()
     {
-        String filename = RefGenVersion.is37() ? "/genome_unmappable_regions.37.bed" : "/genome_unmappable_regions.38.bed";
+        String filename = getUnmappableRegionsFileName(RefGenVersion);
 
         final InputStream inputStream = MetricsConfig.class.getResourceAsStream(filename);
 
@@ -171,6 +156,10 @@ public class MetricsConfig
             BT_LOGGER.error("failed to load unmapped regions file({}): {}", filename, e.toString());
             System.exit(1);
         }
+    }
+
+    static String getUnmappableRegionsFileName(RefGenomeVersion refGenomeVersion) {
+        return refGenomeVersion.is37() ? "/genome_unmappable_regions.37.bed" : "/genome_unmappable_regions.38.bed";
     }
 
     public String formFilename(final String fileType)
