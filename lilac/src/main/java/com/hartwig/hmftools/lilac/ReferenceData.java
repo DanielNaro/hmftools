@@ -121,7 +121,7 @@ public class ReferenceData
 
     @NotNull
     static String getPonIndelsRefFile(RefGenomeVersion version) {
-        return version.is37() ? "/pon/indels_v37.csv" : "/pon/indels_v38.csv";
+        return version.getPonIndelsRefFile();
     }
 
     private static void setKnownStopLossIndels(final RefGenomeVersion version)

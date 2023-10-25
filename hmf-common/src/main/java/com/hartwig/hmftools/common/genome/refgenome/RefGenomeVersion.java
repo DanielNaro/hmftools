@@ -23,7 +23,8 @@ public enum RefGenomeVersion
             "gaps.37.txt",
             "data/karyotype/karyotype.human.hg19.txt",
             "GRCh37",
-            "/genome_unmappable_regions.37.bed"),
+            "/genome_unmappable_regions.37.bed",
+            "/pon/indels_v37.csv"),
     V38(
             "38",
             new RefChrNameCorrectorEnforceChrPrefix(),
@@ -34,7 +35,8 @@ public enum RefGenomeVersion
             "gaps.38.txt",
             "data/karyotype/karyotype.human.hg38.txt",
             "GRCh38",
-            "/genome_unmappable_regions.38.bed");
+            "/genome_unmappable_regions.38.bed",
+            "/pon/indels_v38.csv");
 
     @NotNull
     private final String mIdentifier;
@@ -46,6 +48,7 @@ public enum RefGenomeVersion
 
     private final String refGenomeStr;
     private final String unmappableRegionsFileName;
+    private final String ponIndelsRefFile;
 
     public String getIgtcr_genePath() {
         return igtcr_genePath;
@@ -109,7 +112,7 @@ public enum RefGenomeVersion
                      RefGenomeCoordinates refGenomeCoordinates,
                      String igtcrGenePath,
                      String gapsPath,
-                     String karyotypePath, String refGenomeStr, String unmappableRegionsFileName)
+                     String karyotypePath, String refGenomeStr, String unmappableRegionsFileName, String ponIndelsRefFile)
     {
         mIdentifier = identifier;
         this.chrNameCorrector = chrNameCorrector;
@@ -121,6 +124,7 @@ public enum RefGenomeVersion
         this.karyotypePath = karyotypePath;
         this.refGenomeStr = refGenomeStr;
         this.unmappableRegionsFileName = unmappableRegionsFileName;
+        this.ponIndelsRefFile = ponIndelsRefFile;
     }
 
     public boolean is37() { return stringVersionIs37(mIdentifier); }
@@ -177,5 +181,9 @@ public enum RefGenomeVersion
 
     public String getUnmappableRegionsFileName() {
         return unmappableRegionsFileName;
+    }
+
+    public String getPonIndelsRefFile() {
+        return ponIndelsRefFile;
     }
 }
