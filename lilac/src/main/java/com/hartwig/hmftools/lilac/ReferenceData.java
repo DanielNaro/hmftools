@@ -126,15 +126,17 @@ public class ReferenceData
 
     static void setKnownStopLossIndels(final RefGenomeVersion version)
     {
-        if(version.is38())
-        {
-            STOP_LOSS_ON_C_INDEL = new Indel("chr6", 31269338, "CN", "C");
-            LilacConstants.HLA_CHR = HLA_CHROMOSOME_V38;
-        }
-        else
-        {
-            STOP_LOSS_ON_C_INDEL = new Indel("6", 31237115, "CN", "C");
-            LilacConstants.HLA_CHR = HLA_CHROMOSOME_V37;
+        switch (version){
+            case V37:
+                STOP_LOSS_ON_C_INDEL = new Indel("6", 31237115, "CN", "C");
+                LilacConstants.HLA_CHR = HLA_CHROMOSOME_V37;
+                break;
+            case V38:
+                STOP_LOSS_ON_C_INDEL = new Indel("chr6", 31269338, "CN", "C");
+                LilacConstants.HLA_CHR = HLA_CHROMOSOME_V38;
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
