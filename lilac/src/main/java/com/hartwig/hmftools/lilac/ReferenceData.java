@@ -124,7 +124,7 @@ public class ReferenceData
         return version.getPonIndelsRefFile();
     }
 
-    private static void setKnownStopLossIndels(final RefGenomeVersion version)
+    static void setKnownStopLossIndels(final RefGenomeVersion version)
     {
         if(version.is38())
         {
