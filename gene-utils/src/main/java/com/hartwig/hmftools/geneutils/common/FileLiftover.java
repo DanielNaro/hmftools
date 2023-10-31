@@ -126,7 +126,13 @@ public class FileLiftover
 
     @NotNull
     static RefGenomeVersion inferDestVersion(RefGenomeVersion sourceVersion) {
-        return sourceVersion.is37() ? V38 : V37;
+        switch (sourceVersion){
+            case V37:
+            case V38:
+                return V38;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     private static boolean isField(int index, @Nullable Integer posIndex)
