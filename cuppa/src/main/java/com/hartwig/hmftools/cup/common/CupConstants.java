@@ -76,27 +76,37 @@ public class CupConstants
 
     public static void loadKnownMutations(final RefGenomeVersion refGenomeVersion)
     {
-        if(refGenomeVersion.is37())
-        {
-            // p.Thr790Met
-            KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "C", "T", 55249071, 55249071));
-
-            // p.Leu858Ar
-            KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "T", "G", 55259515, 55259515));
-
-            // inframe DEL in exon 19 (canonical transcript)
-            KNOWN_MUTATIONS.add(new KnownMutation("EGFR", INDEL, "", "", 55242415, 55242513));
-
-            // exon 20
-            KNOWN_MUTATIONS.add(new KnownMutation("EGFR", INDEL, "", "", 55248986, 55249171));
+        switch (refGenomeVersion){
+            case V37:
+                loadKnownMutations_V37();
+                break;
+            case V38:
+                loadKnownMutations_V38();
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
-        else
-        {
-            KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "C", "T", 55181378, 55181378));
-            KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "T", "G", 55191822, 55191822));
-            KNOWN_MUTATIONS.add(new KnownMutation("EGFR", INDEL, "", "", 55174722, 55174820));
-            KNOWN_MUTATIONS.add(new KnownMutation("EGFR", INDEL, "", "", 55181293, 55181478));
-        }
+    }
+
+    private static void loadKnownMutations_V38() {
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "C", "T", 55181378, 55181378));
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "T", "G", 55191822, 55191822));
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", INDEL, "", "", 55174722, 55174820));
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", INDEL, "", "", 55181293, 55181478));
+    }
+
+    private static void loadKnownMutations_V37() {
+        // p.Thr790Met
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "C", "T", 55249071, 55249071));
+
+        // p.Leu858Ar
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "T", "G", 55259515, 55259515));
+
+        // inframe DEL in exon 19 (canonical transcript)
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", INDEL, "", "", 55242415, 55242513));
+
+        // exon 20
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", INDEL, "", "", 55248986, 55249171));
     }
 
     // common data types
