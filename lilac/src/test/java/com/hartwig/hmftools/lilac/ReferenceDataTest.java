@@ -5,8 +5,7 @@ import com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion;
 import com.hartwig.hmftools.lilac.read.Indel;
 import org.junit.Test;
 
-import static com.hartwig.hmftools.lilac.ReferenceData.STOP_LOSS_ON_C_INDEL;
-import static com.hartwig.hmftools.lilac.ReferenceData.setKnownStopLossIndels;
+import static com.hartwig.hmftools.lilac.ReferenceData.*;
 import static org.junit.Assert.assertEquals;
 
 public class ReferenceDataTest{
@@ -44,5 +43,10 @@ public class ReferenceDataTest{
                 "chr6",
                 LilacConstants.HLA_CHR
         );
+    }
+
+    public void testGetHlaTranscriptsFile() {
+        assertEquals("", getHlaTranscriptsFile(RefGenomeVersion.V37) );
+        assertEquals("", getHlaTranscriptsFile(RefGenomeVersion.V38) );
     }
 }

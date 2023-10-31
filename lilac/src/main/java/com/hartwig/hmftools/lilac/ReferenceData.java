@@ -276,7 +276,7 @@ public class ReferenceData
 
     public static void populateHlaTranscripts(final Map<String,TranscriptData> hlaTranscriptMap, final RefGenomeVersion version)
     {
-        String transcriptsFile = version.is37() ? "/alleles/hla_transcripts_v37.csv" : "/alleles/hla_transcripts_v38.csv";
+        String transcriptsFile = getHlaTranscriptsFile(version);
 
         final List<String> hlaTranscriptData = new BufferedReader(new InputStreamReader(
                 ReferenceData.class.getResourceAsStream(transcriptsFile))).lines().collect(Collectors.toList());
@@ -335,6 +335,18 @@ public class ReferenceData
                     Integer.parseInt(items[exonRankIndex]), Integer.parseInt(items[exonPhaseIndex]), Integer.parseInt(items[exonEndPhaseIndex]));
 
             exonDataList.add(exonData);
+        }
+    }
+
+    @NotNull
+    static String getHlaTranscriptsFile(RefGenomeVersion version) {
+        switch (version){
+            case V37:
+                return "/alleles/hla_transcripts_v37.csv";
+            case V38:
+                return "/alleles/hla_transcripts_v38.csv";
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
