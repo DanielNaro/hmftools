@@ -43,7 +43,7 @@ public class FileLiftover
         String outputFile = configBuilder.getValue(OUTPUT_FILE);
 
         RefGenomeVersion sourceVersion = RefGenomeVersion.from(configBuilder.getValue(SOURCE_REF_GENOME_VERSION));
-        RefGenomeVersion destVersion = sourceVersion.is37() ? V38 : V37;
+        RefGenomeVersion destVersion = inferDestVersion(sourceVersion);
 
         GenomeLiftoverCache liftoverCache = new GenomeLiftoverCache(true, destVersion == V38);
 
@@ -122,6 +122,11 @@ public class FileLiftover
             GU_LOGGER.error("failed to read/write: {}", e.toString());
             System.exit(1);
         }
+    }
+
+    @NotNull
+    static RefGenomeVersion inferDestVersion(RefGenomeVersion sourceVersion) {
+        return sourceVersion.is37() ? V38 : V37;
     }
 
     private static boolean isField(int index, @Nullable Integer posIndex)
