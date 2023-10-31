@@ -190,7 +190,7 @@ public class EnsemblDAO
 
     private int findCoordSystemId()
     {
-        final String version = mRefGenomeVersion.is37() ? "GRCh37" : "GRCh38";
+        final String version = mRefGenomeVersion.getRefGenomeStr();
 
         final String queryStr = "select coord_system_id from coord_system c"
                 + " where version = '" + version + "'"
