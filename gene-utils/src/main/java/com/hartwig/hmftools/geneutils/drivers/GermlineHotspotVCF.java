@@ -92,7 +92,7 @@ public final class GermlineHotspotVCF
         reader.close();
 
         // ADD WHITE LIST (OUT OF ORDER)
-        variants.addAll(assembly.equals(REF_GENOME_37) ? GermlineResources.whitelist37() : GermlineResources.whitelist38());
+        variants.addAll(GermlineResources.whitelist(RefGenomeVersion.from(assembly)));
 
         // Get sorted contigs
         final List<String> contigs = variants.stream().map(VariantContext::getContig).distinct().collect(Collectors.toList());

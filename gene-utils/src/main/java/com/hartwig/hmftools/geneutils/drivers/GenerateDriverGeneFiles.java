@@ -314,8 +314,8 @@ public class GenerateDriverGeneFiles
 
         try
         {
-            List<VariantContext> germlineBlackList = refGenomeVersion == RefGenomeVersion.V37 ?
-                    GermlineResources.blacklist37() : GermlineResources.blacklist38();
+            List<VariantContext> germlineBlackList =
+                    GermlineResources.blacklist(refGenomeVersion);
 
             GermlineBlacklistVCF.write(germlineBlacklistFile, germlineBlackList);
         }
