@@ -1,11 +1,13 @@
 package com.hartwig.hmftools.common.genome.refgenome;
 
 import com.hartwig.hmftools.common.immune.ImmuneRegionInterface;
+import com.hartwig.hmftools.common.immune.ImmuneRegion_HS1;
 import com.hartwig.hmftools.common.immune.ImmuneRegion_V37;
 import com.hartwig.hmftools.common.immune.ImmuneRegion_V38;
 import com.hartwig.hmftools.common.region.ExcludedRegionsInterface;
 import com.hartwig.hmftools.common.region.ExcludedRegionsInterfaceImpl37;
 import com.hartwig.hmftools.common.region.ExcludedRegionsInterfaceImpl38;
+import com.hartwig.hmftools.common.region.ExcludedRegionsInterfaceImplT2T;
 import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +38,18 @@ public enum RefGenomeVersion
             "data/karyotype/karyotype.human.hg38.txt",
             "GRCh38",
             "/genome_unmappable_regions.38.bed",
+            "/pon/indels_v38.csv"),
+    HS1(
+            "HS1",
+            new RefChrNameCorrectorEnforceChrPrefix(),
+            new ExcludedRegionsInterfaceImplT2T(),
+            new ImmuneRegion_HS1(),
+            RefGenomeCoordinates.COORDS_HS1,
+            "igtcr_gene.38.tsv", //todo lift this
+            "gaps.chm13.txt",
+            "karyotype.human.chm13.txt",
+            "HS1",
+            "/genome_unmappable_regions.chm13.bed",
             "/pon/indels_v38.csv");
 
     @NotNull
