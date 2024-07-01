@@ -91,7 +91,8 @@ public class FileLiftover
                     if(isField(i, posIndex) || isField(i, posStartIndex) || isField(i, posEndIndex))
                     {
                         int origPosition = Integer.parseInt(value);
-                        int newPosition = liftoverCache.convertPosition(chromosome, origPosition, destVersion);
+                        //todo check
+                        int newPosition = liftoverCache.convertPosition(chromosome, origPosition);
 
                         if(newPosition == UNMAPPED_POSITION)
                         {
@@ -129,6 +130,7 @@ public class FileLiftover
         switch (sourceVersion){
             case V37:
             case V38:
+            case HS1:
                 return V38;
             default:
                 throw new IllegalArgumentException();
