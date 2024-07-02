@@ -62,6 +62,7 @@ class BreakEndParams
             {
                 RefGenomeVersion.V37 -> "blacklistedTelomereRegions.37.bed"
                 RefGenomeVersion.V38 -> "blacklistedTelomereRegions.38.bed"
+                RefGenomeVersion.HS1 -> "blacklistedTelomereRegions.chm13.bed"
                 else -> null
             }
             if (resourcePath != null)
