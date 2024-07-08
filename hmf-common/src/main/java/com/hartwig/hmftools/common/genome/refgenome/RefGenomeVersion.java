@@ -45,12 +45,12 @@ public enum RefGenomeVersion
             new ExcludedRegionsInterfaceImplT2T(),
             new ImmuneRegion_HS1(),
             RefGenomeCoordinates.COORDS_HS1,
-            "igtcr_gene.38.tsv", //todo lift this
+            "igtcr_gene.chm13.tsv",
             "gaps.chm13.txt",
             "karyotype.human.chm13.txt",
             "HS1",
             "/genome_unmappable_regions.chm13.bed",
-            "/pon/indels_v38.csv");
+            "/pon/indels_vCHM13.csv");
 
     @NotNull
     private final String mIdentifier;
@@ -106,8 +106,15 @@ public enum RefGenomeVersion
         {
             return V38;
         }
+        else if(stringVersionIsHS1(version)){
+            return HS1;
+        }
 
         throw new IllegalArgumentException("Cannot resolve ref genome version: " + version);
+    }
+
+    private static boolean stringVersionIsHS1(String version) {
+        return version.equals(V38.toString()) || version.equals("HS1") || version.equals("CHM13");
     }
 
     public static RefGenomeVersion from(final ConfigBuilder configBuilder)
