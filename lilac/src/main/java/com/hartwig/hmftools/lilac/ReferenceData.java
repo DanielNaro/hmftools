@@ -1,8 +1,7 @@
 package com.hartwig.hmftools.lilac;
 
 import static com.hartwig.hmftools.common.ensemblcache.EnsemblDataLoader.ENSEMBL_DELIM;
-import static com.hartwig.hmftools.common.hla.HlaCommon.HLA_CHROMOSOME_V37;
-import static com.hartwig.hmftools.common.hla.HlaCommon.HLA_CHROMOSOME_V38;
+import static com.hartwig.hmftools.common.hla.HlaCommon.*;
 import static com.hartwig.hmftools.common.utils.file.FileReaderUtils.createFieldsIndexMap;
 import static com.hartwig.hmftools.lilac.LilacConfig.LL_LOGGER;
 import static com.hartwig.hmftools.lilac.LilacConstants.COMMON_ALLELES_FREQ_CUTOFF;
@@ -134,6 +133,11 @@ public class ReferenceData
             case V38:
                 STOP_LOSS_ON_C_INDEL = new Indel("chr6", 31269338, "CN", "C");
                 LilacConstants.HLA_CHR = HLA_CHROMOSOME_V38;
+                break;
+            case HS1:
+                //lifted from 38 using UCSC
+                STOP_LOSS_ON_C_INDEL = new Indel("chr6", 31135502, "CT", "C");
+                LilacConstants.HLA_CHR = HLA_CHROMOSOME_CHM13;
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -345,6 +349,8 @@ public class ReferenceData
                 return "/alleles/hla_transcripts_v37.csv";
             case V38:
                 return "/alleles/hla_transcripts_v38.csv";
+            case HS1:
+                return "/alleles/hla_transcripts_vCHM13.csv";
             default:
                 throw new IllegalArgumentException();
         }
