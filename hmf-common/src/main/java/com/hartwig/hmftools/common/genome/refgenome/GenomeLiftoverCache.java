@@ -2,7 +2,7 @@ package com.hartwig.hmftools.common.genome.refgenome;
 
 import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeFunctions.LOGGER;
 import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeFunctions.stripChrPrefix;
-import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion.V38;
+import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion.*;
 import static com.hartwig.hmftools.common.utils.file.FileDelimiters.TSV_DELIM;
 import static com.hartwig.hmftools.common.utils.file.FileReaderUtils.createFieldsIndexMap;
 
@@ -24,7 +24,8 @@ import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
 public class GenomeLiftoverCache
 {
     private final Map<String,List<CoordMapping>> mMappings;
-    private final boolean mMaps37to38;
+    private final RefGenomeVersion refGenomeVersion;
+    private final RefGenomeVersion destinationRefGenome;
 
     public static final String LIFTOVER_MAPPING_FILE = "liftover_mapping";
     public static final String LIFTOVER_MAPPING_FILE_DESC = "Liftover mapping file";
@@ -33,26 +34,64 @@ public class GenomeLiftoverCache
 
     private static final String NEG_ORIENT = "-";
 
-    public GenomeLiftoverCache() { this(false, true); }
+    public GenomeLiftoverCache() { this(false, V37, V38); }
 
-    public GenomeLiftoverCache(boolean loadDefaultMappings, boolean maps37to38)
+    public GenomeLiftoverCache(boolean loadDefaultMappings, boolean maps37to38){
+        this(
+                loadDefaultMappings,
+                maps37to38 ? V37: V38,
+                maps37to38 ? V38: V37
+        );
+    }
+
+    public GenomeLiftoverCache(
+            boolean loadDefaultMappings,
+           RefGenomeVersion originRefGenome ){
+        this(loadDefaultMappings, originRefGenome, V38);
+    }
+
+    public GenomeLiftoverCache(boolean loadDefaultMappings,
+                               RefGenomeVersion originRefGenome,
+                               RefGenomeVersion destinationRefGenome)
     {
         mMappings = Maps.newHashMap();
-        mMaps37to38 = maps37to38;
+        this.refGenomeVersion = originRefGenome;
+        this.destinationRefGenome = destinationRefGenome;
 
-        if(loadDefaultMappings)
+        if (
+                (originRefGenome.is37() && destinationRefGenome.is38())
+                || (originRefGenome.is38() && destinationRefGenome.is37())
+        ){
             loadDefaultResource();
+        } else if (originRefGenome.is38() &&  destinationRefGenome == HS1){
+            loadFile("hg38_HS1_mapping.tsv");
+        } else if (originRefGenome == HS1 && destinationRefGenome.is38()){
+            loadFile("chm13v2-grch38.tsv");
+        } else if (originRefGenome.is37() && destinationRefGenome == HS1){
+            loadFile("hg19-chm13v2.tsv");
+        } else if (originRefGenome == HS1 && destinationRefGenome.is37()){
+            loadFile("chm13v2-hg19.tsv");
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public boolean hasMappings() { return !mMappings.isEmpty(); }
 
     public List<CoordMapping> getChromosomeMappings(final String chromosome) { return mMappings.get(chromosome); }
 
-    public int convertPosition(final String chromosome, final int position) { return convertPositionTo38(chromosome, position); }
+    //public int convertPosition(final String chromosome, final int position)
+    // { return convertPositionTo38(chromosome, position); }
 
-    public int convertPosition(final String chromosome, final int position, final RefGenomeVersion destinationVersion)
+    public int convertPosition(final String chromosome, final int position)
     {
-        return destinationVersion == V38 ? convertPositionTo38(chromosome, position) : convertPositionTo37(chromosome, position);
+        if (refGenomeVersion == V37 && destinationRefGenome.is38()){
+            return convertPositionTo38(chromosome, position);
+        } else if (refGenomeVersion == V38 && destinationRefGenome == V37){
+            return convertPositionTo37(chromosome, position);
+        } else {
+            return convertPositionToDestination(chromosome, position);
+        }
     }
 
     public int convertPositionTo37(final String chromosome, final int position)
@@ -67,10 +106,33 @@ public class GenomeLiftoverCache
             if(mapping.DestEnd < position)
                 continue;
 
-            if(mapping.DestStart > position && !mMaps37to38) // can exit if sorted
+            if(mapping.DestStart > position && !refGenomeVersion.is37()) // can
+                // exit if sorted
                 return UNMAPPED_POSITION;
 
             return mapping.reversePosition(position);
+        }
+
+        return UNMAPPED_POSITION;
+    }
+
+    public int convertPositionToDestination(final String chromosome,
+                                     final int position)
+    {
+        List<CoordMapping> mappings = mMappings.get(chromosome);
+
+        if(mappings == null || mappings.isEmpty())
+            return position;
+
+        for(CoordMapping mapping : mappings)
+        {
+            if(mapping.SourceEnd < position)
+                continue;
+
+            if(mapping.SourceStart > position)
+                return UNMAPPED_POSITION;
+
+            return mapping.convertPosition(position);
         }
 
         return UNMAPPED_POSITION;
@@ -131,9 +193,6 @@ public class GenomeLiftoverCache
     public boolean loadFile(final List<String> lines)
     {
         String header = lines.get(0);
-        lines.remove(0);
-
-        Map<String,Integer> fieldsIndexMap = createFieldsIndexMap(header, TSV_DELIM);
 
         List<CoordMapping> chrMappings = null;
         String currentChromosome = "";
@@ -159,18 +218,18 @@ public class GenomeLiftoverCache
 
             // note +1 for start positions since source file is in BED style
             // Chr37	Start37	End37	Orient37	Chr38 	Start38	End38	Orient38
-            boolean isReverse = values[fieldsIndexMap.get("Orient38")].equals(NEG_ORIENT);
+            boolean isReverse = values[7].equals(NEG_ORIENT);
 
             chrMappings.add(new CoordMapping(
-                    values[fieldsIndexMap.get("Chr37")],
-                    Integer.parseInt(values[fieldsIndexMap.get("Start37")]) + 1,
-                    Integer.parseInt(values[fieldsIndexMap.get("End37")]),
-                    Integer.parseInt(values[fieldsIndexMap.get("Start38")]) + 1,
-                    Integer.parseInt(values[fieldsIndexMap.get("End38")]),
+                    values[0],
+                    Integer.parseInt(values[1]) + 1,
+                    Integer.parseInt(values[2]),
+                    Integer.parseInt(values[5]) + 1,
+                    Integer.parseInt(values[6]),
                     isReverse));
         }
 
-        if(!mMaps37to38)
+        if(!refGenomeVersion.is37())
         {
             // sort each chromosome's mappings by the end/destination region
             for(List<CoordMapping> mappings : mMappings.values())

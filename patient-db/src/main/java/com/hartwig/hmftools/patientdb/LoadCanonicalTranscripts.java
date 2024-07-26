@@ -40,6 +40,7 @@ public class LoadCanonicalTranscripts
         LOGGER.info("Persisting transcripts to database");
         loadCanonicalTranscripts(dbAccess, ensemblRootDir, RefGenomeVersion.V37);
         loadCanonicalTranscripts(dbAccess, ensemblRootDir, RefGenomeVersion.V38);
+        loadCanonicalTranscripts(dbAccess, ensemblRootDir, RefGenomeVersion.HS1);
 
         LOGGER.info("Complete");
     }

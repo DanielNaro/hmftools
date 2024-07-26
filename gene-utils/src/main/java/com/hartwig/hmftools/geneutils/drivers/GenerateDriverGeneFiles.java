@@ -87,6 +87,7 @@ public class GenerateDriverGeneFiles
 
         process(RefGenomeVersion.V37, driverGenes);
         process(RefGenomeVersion.V38, driverGenes);
+        process(RefGenomeVersion.HS1, driverGenes);
 
         GU_LOGGER.info("file generation complete");
     }

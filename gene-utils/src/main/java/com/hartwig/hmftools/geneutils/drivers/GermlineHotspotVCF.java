@@ -30,6 +30,7 @@ public final class GermlineHotspotVCF
     private static final String WHITELIST_FLAG = "WHITELIST";
     private static final String REF_GENOME_37 = "GRCh37";
     private static final String REF_GENOME_38 = "GRCh38";
+    private static final String REF_GENOME_CHM13 = "HS1";
 
     public static void write(
             final RefGenomeVersion refGenomeVersion, final String inputFile, final String outputFile, final List<String> genes) throws IOException
@@ -47,7 +48,8 @@ public final class GermlineHotspotVCF
         final String assembly = readerHeader.getMetaDataLine("reference").getValue();
 
         if((refGenomeVersion == RefGenomeVersion.V37 && !assembly.equals(REF_GENOME_37))
-        || (refGenomeVersion == RefGenomeVersion.V38 && !assembly.equals(REF_GENOME_38)))
+        || (refGenomeVersion == RefGenomeVersion.V38 && !assembly.equals(REF_GENOME_38))
+        || (refGenomeVersion == RefGenomeVersion.HS1 && !assembly.equals(REF_GENOME_CHM13)))
         {
             GU_LOGGER.error("clinvar file({}) has incorrect ref genome version({}) vs required({})",
                     inputFile, assembly, refGenomeVersion);

@@ -135,6 +135,7 @@ public class PositionFrequencies
         for(HumanChromosome chromosome : HumanChromosome.values())
         {
             int chromosome_length = Arrays.stream(RefGenomeVersion.values())
+                    .filter(it -> it.is37() || it.is38())
                     .map(
                             refGenomeVersion1 -> refGenomeVersion1.getRefGenomeCoordinates().length(chromosome.toString())
                     ).max(Integer::compareTo).get();

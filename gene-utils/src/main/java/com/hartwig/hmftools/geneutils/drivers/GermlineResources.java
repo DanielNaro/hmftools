@@ -23,8 +23,9 @@ public final class GermlineResources
                 return resource(resourceURL("/drivers/GermlineHotspots.whitelist.37.vcf"));
             case V38:
                 return resource(resourceURL("/drivers/GermlineHotspots.whitelist.38.vcf"));
+            case HS1:
+                return resource(resourceURL("/drivers/GermlineHotspots.whitelist.chm13.vcf"));
             default:
-                //TODO add chm13
                 throw new IllegalArgumentException();
         }
     }
@@ -36,8 +37,9 @@ public final class GermlineResources
                 return resource(resourceURL("/drivers/GermlineHotspots.blacklist.37.vcf"));
             case V38:
                 return resource(resourceURL("/drivers/GermlineHotspots.blacklist.38.vcf"));
+            case HS1:
+                return resource(resourceURL("/drivers/GermlineHotspots.blacklist.chm13.vcf"));
             default:
-                //TODO add chm13
                 throw new IllegalArgumentException();
         }
     }

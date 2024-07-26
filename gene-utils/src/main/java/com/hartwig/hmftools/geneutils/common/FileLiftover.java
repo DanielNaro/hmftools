@@ -91,7 +91,6 @@ public class FileLiftover
                     if(isField(i, posIndex) || isField(i, posStartIndex) || isField(i, posEndIndex))
                     {
                         int origPosition = Integer.parseInt(value);
-                        //todo check
                         int newPosition = liftoverCache.convertPosition(chromosome, origPosition);
 
                         if(newPosition == UNMAPPED_POSITION)

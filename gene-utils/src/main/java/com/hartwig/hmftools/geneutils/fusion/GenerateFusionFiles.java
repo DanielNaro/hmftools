@@ -84,6 +84,7 @@ public class GenerateFusionFiles
             }
         }
 
+        //todo add chm13, uses ENSEMBL
         createFusionFiles(RefGenomeVersion.V37, fusionRefData);
         createFusionFiles(RefGenomeVersion.V38, fusionRefData);
 
