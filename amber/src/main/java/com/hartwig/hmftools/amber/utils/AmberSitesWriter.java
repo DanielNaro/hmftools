@@ -36,11 +36,12 @@ public class AmberSitesWriter
     private static final String INPUT_GERMLINE_HET_FILE = "input_sites_file";
     private static final String SNP_CHECKS_FILE = "snp_check_sites_file";
     private static final String SOURCE_REF_GEN_VERSION = "source_ref_genome_version";
+    private static final String DESTINATION_REF_GEN_VERSION =
+            "destination_ref_genome_version";
 
     private final String mInputFile;
     private final String mOutputDir;
     private final String mSnpCheckFile;
-    private final GenomeLiftoverCache mGenomeLiftoverCache;
     private final RefGenomeVersion mSourceRefGenVersion;
 
     public AmberSitesWriter(final ConfigBuilder configBuilder)
@@ -49,8 +50,12 @@ public class AmberSitesWriter
         mOutputDir = parseOutputDir(configBuilder);
         mSnpCheckFile = configBuilder.getValue(SNP_CHECKS_FILE);
         mSourceRefGenVersion = RefGenomeVersion.from(configBuilder.getValue(SOURCE_REF_GEN_VERSION));
-
-        mGenomeLiftoverCache = new GenomeLiftoverCache(true, mSourceRefGenVersion == V37);
+        /*mDestinationRefGenVersion =
+                RefGenomeVersion.from(configBuilder.getValue(DESTINATION_REF_GEN_VERSION));
+        mGenomeLiftoverCache = new GenomeLiftoverCache(
+                true,
+                mSourceRefGenVersion,
+                mDestinationRefGenVersion);*/
     }
 
     public static String amberSitesFilename(final RefGenomeVersion version)
@@ -188,7 +193,11 @@ public class AmberSitesWriter
 
         if(version != mSourceRefGenVersion)
         {
-            position = mGenomeLiftoverCache.convertPosition(site.Chromosome, site.Position, version);
+            GenomeLiftoverCache genomeLiftoverCache = new GenomeLiftoverCache(
+                    true,
+                    mSourceRefGenVersion,
+                    version);
+            position = genomeLiftoverCache.convertPosition(site.Chromosome, site.Position);
 
             if(position == UNMAPPED_POSITION)
             {
@@ -209,7 +218,10 @@ public class AmberSitesWriter
 
         configBuilder.addPath(INPUT_GERMLINE_HET_FILE, true, "Input germline locations file");
         configBuilder.addPath(SNP_CHECKS_FILE, true, "Input germline locations file");
-        configBuilder.addConfigItem(SOURCE_REF_GEN_VERSION, true, "Ref genome version to convert to V37 or 38)");
+        configBuilder.addConfigItem(SOURCE_REF_GEN_VERSION, true, "Ref genome" +
+                " version to convert from V37 or 38)");
+        configBuilder.addConfigItem(DESTINATION_REF_GEN_VERSION, true, "Ref genome version to " +
+                "convert to V37 or 38)");
         addOutputDir(configBuilder);
         addLoggingOptions(configBuilder);
 

@@ -215,6 +215,13 @@ public class RegionOfHomozygosityFinder
             case V38:
                 resourcePath = "rohExcluded.38.bed";
                 break;
+            case HS1:
+                //rohExcludedLifted for 38, broken in chunks, lifted and
+                // merged
+                resourcePath = "rohExcluded.chm13.bed";
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
 
         List<GenomeRegion> excludedRegions = AmberUtils.loadBedFromResource(resourcePath);

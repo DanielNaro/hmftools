@@ -1,5 +1,6 @@
 package com.hartwig.hmftools.amber.utils;
 
+import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion.V37;
 import static java.lang.String.format;
 
 import static com.hartwig.hmftools.amber.AmberConfig.AMB_LOGGER;
@@ -131,7 +132,7 @@ public class GermlineLocationConversion
 
     private boolean writeVariant(final BufferedWriter writer, final AmberReferenceSite site, final Set<Integer> snpCheckPositions) throws IOException
     {
-        int convertedPos = mGenomeLiftoverCache.convertPosition(site.Chromosome, site.Position, mDestRefGenVersion);
+        int convertedPos = mGenomeLiftoverCache.convertPosition(site.Chromosome, site.Position);
 
         if(convertedPos == UNMAPPED_POSITION)
         {
