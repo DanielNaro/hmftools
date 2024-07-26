@@ -83,11 +83,21 @@ public class CupConstants
             case V38:
                 loadKnownMutations_V38();
                 break;
+            case HS1:
+                loadKnownMutations_CHM13();
+                break;
             default:
                 throw new IllegalArgumentException();
         }
     }
 
+    // lifted from V38 using UCSC
+    private static void loadKnownMutations_CHM13(){
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "C", "T", 55341802, 55341802));
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "T", "G", 55352246, 55352246));
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", INDEL, "", "", 55335146, 55335244));
+        KNOWN_MUTATIONS.add(new KnownMutation("EGFR", INDEL, "", "", 55341717, 55341902));
+    }
     private static void loadKnownMutations_V38() {
         KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "C", "T", 55181378, 55181378));
         KNOWN_MUTATIONS.add(new KnownMutation("EGFR", SNP, "T", "G", 55191822, 55191822));
