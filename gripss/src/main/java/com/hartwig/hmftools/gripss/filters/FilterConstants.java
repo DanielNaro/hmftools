@@ -57,6 +57,21 @@ public class FilterConstants
 
     public static final ChrBaseRegion PMS2_V37 = new ChrBaseRegion("7", 6002870, 6058756); // has 10K buffer
     public static final ChrBaseRegion PMS2_V38 = new ChrBaseRegion("chr7", 5960925, 6019106);
+    //lifted using UCSC from PMS2_V38 to CHM13v2
+    public static final ChrBaseRegion PMS2_CHM13 = new ChrBaseRegion("chr7", 6078686, 6136878);
+
+    public static ChrBaseRegion getPMS2_for_RefGenome(RefGenomeVersion refGenomeVersion){
+        switch (refGenomeVersion){
+            case V37:
+                return PMS2_V37;
+            case V38:
+                return PMS2_V38;
+            case HS1:
+                return PMS2_CHM13;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
 
     // config overrides
     public static final String HARD_MIN_TUMOR_QUAL_CFG = "hard_min_tumor_qual";
@@ -93,7 +108,8 @@ public class FilterConstants
                 configBuilder.getInteger(MAX_HOM_LENGTH_SHORT_INV_CFG),
                 configBuilder.getInteger(MIN_LENGTH_CFG),
                 configBuilder.getInteger(PON_DISTANCE),
-                getPolyGRegions(refGenVersion), refGenVersion == V37 ? PMS2_V37 : PMS2_V38,
+                getPolyGRegions(refGenVersion),
+                getPMS2_for_RefGenome(refGenVersion),
                 configBuilder.hasFlag(FILTER_SGLS));
     }
 

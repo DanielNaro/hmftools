@@ -1,5 +1,6 @@
 package com.hartwig.hmftools.gripss;
 
+import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion.V37;
 import static com.hartwig.hmftools.common.region.ExcludedRegionsInterfaceImpl37.POLY_G_REGIONS_V37;
 import static com.hartwig.hmftools.common.utils.sv.StartEndIterator.SE_END;
 import static com.hartwig.hmftools.common.utils.sv.StartEndIterator.SE_PAIR;
@@ -37,21 +38,7 @@ import static com.hartwig.hmftools.gripss.common.VcfUtils.VT_SRQ;
 import static com.hartwig.hmftools.gripss.common.VcfUtils.VT_VF;
 import static com.hartwig.hmftools.gripss.common.VariantAltInsertCoords.formPairedAltString;
 import static com.hartwig.hmftools.gripss.common.VariantAltInsertCoords.formSingleAltString;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_HARD_MAX_NORMAL_ABSOLUTE_SUPPORT;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_HARD_MAX_NORMAL_RELATIVE_SUPPORT;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_HARD_MIN_TUMOR_QUAL;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_MAX_HOM_LENGTH_SHORT_INV;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_MAX_SHORT_STRAND_BIAS;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_MIN_LENGTH;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_MIN_NORMAL_COVERAGE;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_MIN_QUAL_BREAK_END;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_MIN_QUAL_BREAK_POINT;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_MIN_QUAL_RESCUE_MOBILE_ELEMENT_INSERTION;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_MIN_TUMOR_AF;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_MIN_TUMOR_AF_SGL;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_PON_DISTANCE;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.DEFAULT_SOFT_MAX_NORMAL_RELATIVE_SUPPORT;
-import static com.hartwig.hmftools.gripss.filters.FilterConstants.PMS2_V37;
+import static com.hartwig.hmftools.gripss.filters.FilterConstants.*;
 
 import java.util.List;
 import java.util.Map;
@@ -372,7 +359,7 @@ public class GripssTestUtils
                 DEFAULT_MIN_LENGTH,
                 DEFAULT_PON_DISTANCE,
                 POLY_G_REGIONS_V37,
-                PMS2_V37,
+                getPMS2_for_RefGenome(V37),
                 false);
     }
 
