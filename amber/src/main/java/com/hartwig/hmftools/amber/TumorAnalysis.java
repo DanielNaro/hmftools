@@ -39,7 +39,8 @@ public class TumorAnalysis
     private void tumorBAFAndContamination(final SamReaderFactory readerFactory,
             final ListMultimap<Chromosome, PositionEvidence> germlineHetLoci, final ListMultimap<Chromosome, PositionEvidence> germlineHomLoci) throws InterruptedException
     {
-        AMB_LOGGER.info("processing tumor germline heterozygous({}) and homozygous({}) sites",
+        AMB_LOGGER.warn("processing tumor germline heterozygous({}) and " +
+                        "homozygous({}) sites",
                 germlineHetLoci.values().size(), germlineHomLoci.size());
 
         Map<Chromosome,List<PositionEvidence>> chrPositionEvidence = Maps.newHashMap();
@@ -63,6 +64,8 @@ public class TumorAnalysis
 
             positions.add(tumorBAF.TumorEvidence);
         }
+
+        AMB_LOGGER.warn("tumor bafs {}", tumorBAFs.size());
 
         for(Map.Entry<Chromosome, PositionEvidence> entry : germlineHomLoci.entries())
         {
