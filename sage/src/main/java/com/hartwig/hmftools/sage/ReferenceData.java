@@ -59,6 +59,17 @@ public class ReferenceData
         GeneDataCache = new EnsemblDataCache(configBuilder);
         loadGeneData();
 
+        SG_LOGGER.warn("refGenVersion: {}", config.Common.RefGenVersion);
+        SG_LOGGER.warn("hlaChromosome: {}",
+                hlaChromosome(config.Common.RefGenVersion));
+        SG_LOGGER.warn("GeneDataCache: {}",
+                GeneDataCache);
+        SG_LOGGER.warn("GeneDataCache.getChrGeneDataMap: {}",
+                GeneDataCache.getChrGeneDataMap());
+        SG_LOGGER.warn("GeneDataCache.getChrGeneDataMap().size: {}",
+                GeneDataCache.getChrGeneDataMap().size());
+        SG_LOGGER.warn("GeneDataCache.getChrGeneDataMap().get(hlaChromosome(config.Common.RefGenVersion)).size(): {}",
+                GeneDataCache.getChrGeneDataMap().get(hlaChromosome(config.Common.RefGenVersion)).size());
         HlaCommon.populateGeneData(GeneDataCache.getChrGeneDataMap().get(hlaChromosome(config.Common.RefGenVersion)));
     }
 

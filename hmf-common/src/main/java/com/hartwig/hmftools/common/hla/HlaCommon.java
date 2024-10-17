@@ -12,6 +12,8 @@ import com.hartwig.hmftools.common.gene.GeneData;
 import com.hartwig.hmftools.common.genome.position.GenomePosition;
 import com.hartwig.hmftools.common.genome.refgenome.RefGenomeFunctions;
 import com.hartwig.hmftools.common.genome.refgenome.RefGenomeVersion;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class HlaCommon
 {
@@ -23,6 +25,7 @@ public final class HlaCommon
     public static final List<String> HLA_GENES = Lists.newArrayList("HLA-A","HLA-B","HLA-C","HLA-DQA1","HLA-DQB1","HLA-DRB1");
 
     public static final List<GeneData> HLA_GENE_DATA = Lists.newArrayList();
+    public static final Logger SG_LOGGER = LogManager.getLogger(HlaCommon.class);
 
     public static String hlaChromosome(final RefGenomeVersion version) {
         switch (version){
@@ -38,6 +41,13 @@ public final class HlaCommon
 
     public static void populateGeneData(final List<GeneData> geneDataList)
     {
+        SG_LOGGER.warn("geneDataList: {}", geneDataList);
+        SG_LOGGER.warn("geneDataList.size: {}",
+                geneDataList.size());
+        SG_LOGGER.warn("HLA_GENES: {}",
+                HLA_GENES);
+        SG_LOGGER.warn("HLA_GENES.size: {}",
+                HLA_GENES.size());
         HLA_GENE_DATA.addAll(geneDataList.stream()
                 .filter(x -> HLA_GENES.contains(x.GeneName)).collect(Collectors.toList()));
     }
