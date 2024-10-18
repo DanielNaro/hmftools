@@ -60,17 +60,22 @@ public final class EnsemblDataLoader
         String filename = dataPath;
 
         filename += ENSEMBL_GENE_DATA_FILE;
+        LOGGER.warn("attempting to load {}",filename);
 
-        if(!Files.exists(Paths.get(filename)))
+        if(!Files.exists(Paths.get(filename))) {
+            LOGGER.warn("file {} does not exist",filename);
             return false;
+        }
 
         try
         {
             BufferedReader fileReader = new BufferedReader(new FileReader(filename));
 
             String line = fileReader.readLine();
+            LOGGER.warn("read line {} from file {}",line, filename);
 
             final Map<String,Integer> fieldsIndexMap = createFieldsIndexMap(line, ENSEMBL_DELIM);
+            LOGGER.warn("retrieved {} columns",fieldsIndexMap.size());
 
             if(line == null)
             {
@@ -96,17 +101,21 @@ public final class EnsemblDataLoader
 
             while (line != null)
             {
+                LOGGER.warn("read line {} from file {}",line, filename);
                 String[] items = line.split(ENSEMBL_DELIM, -1);
 
                 final String geneId = items[geneIdIndex];
 
                 if(!restrictedGeneIds.isEmpty() && !restrictedGeneIds.contains(geneId))
                 {
+                    LOGGER.warn("skipping line restrictedGeneIds.contains: {}",
+                            restrictedGeneIds.contains(geneId));
                     line = fileReader.readLine();
                     continue;
                 }
 
                 final String chromosome = version.versionedChromosome(items[chromosomeIndex]);
+                LOGGER.warn("versioned chromosome: {}", chromosome);
 
                 GeneData geneData = new GeneData(
                         geneId, items[geneNameIndex], chromosome, Byte.parseByte(items[strandIndex]),
@@ -117,6 +126,7 @@ public final class EnsemblDataLoader
 
                 if(!currentChr.equals(chromosome))
                 {
+                    LOGGER.warn("change in chromosome {}", chromosome);
                     currentChr = chromosome;
                     geneList = chrGeneDataMap.get(chromosome);
 
