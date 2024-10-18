@@ -87,16 +87,21 @@ public class AmberApplication implements AutoCloseable
 
     private ImmutableListMultimap<Chromosome,AmberSite> loadAmberSites() throws IOException
     {
+        AMB_LOGGER.warn("mConfig.BafLociPath: {}",mConfig.BafLociPath);
         ListMultimap<Chromosome,AmberSite> amberSitesMap = AmberSitesFile.sites(mConfig.BafLociPath);
+        AMB_LOGGER.warn("amberSitesMap.size(): {}",amberSitesMap.size());
 
-        if(mConfig.TargetRegionsBed == null)
+        if(mConfig.TargetRegionsBed == null) {
+            AMB_LOGGER.warn("mConfig.TargetRegionsBed == null");
             return ImmutableListMultimap.copyOf(amberSitesMap);
+        }
 
         ListMultimap<Chromosome,AmberSite> targetRegionSites = ArrayListMultimap.create();
 
         try
         {
             Map<Chromosome,List<BaseRegion>> targetRegions = loadBedFileChrMap(mConfig.TargetRegionsBed);
+            AMB_LOGGER.warn("targetRegions.size: {}", targetRegions.size());
 
             for(Map.Entry<Chromosome,List<BaseRegion>> entry : targetRegions.entrySet())
             {
@@ -174,13 +179,14 @@ public class AmberApplication implements AutoCloseable
     private void runNormalMode() throws InterruptedException, IOException
     {
         final SamReaderFactory readerFactory = readerFactory(mConfig);
-
         GermlineAnalysis germline = new GermlineAnalysis(mConfig, readerFactory, mChromosomeSites);
 
         TumorAnalysis tumor = new TumorAnalysis(mConfig, readerFactory,
                 germline.getHeterozygousLoci(), germline.getHomozygousLoci());
 
+        AMB_LOGGER.warn("tumor.getBags.size {}", tumor.getBafs().size());
         final List<TumorBAF> tumorBAFList = tumor.getBafs().values().stream().sorted().collect(toList());
+        AMB_LOGGER.warn("tumorBAFList.size {}", tumorBAFList.size());
         final List<AmberBAF> amberBAFList = tumorBAFList.stream().map(x -> fromTumorBaf(x)).filter(AmberUtils::isValid).collect(toList());
 
         final List<TumorContamination> contaminationList = new ArrayList<>(tumor.getContamination().values());

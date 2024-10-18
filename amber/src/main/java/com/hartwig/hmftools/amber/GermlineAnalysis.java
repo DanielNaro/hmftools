@@ -41,6 +41,8 @@ public class GermlineAnalysis
     {
         mConfig = config;
 
+        AMB_LOGGER.warn("chrAmberSites.size: {}",chrAmberSites.size());
+
         final Predicate<PositionEvidence> isValidFilter = PositionEvidence::isValid;
         Predicate<PositionEvidence> homozygousFilter = new NormalHomozygousFilter().and(isValidFilter);
         Predicate<PositionEvidence> heterozygousFilter = new NormalHeterozygousFilter(mConfig.MinHetAfPercent, mConfig.MaxHetAfPercent).and(isValidFilter);
@@ -68,6 +70,9 @@ public class GermlineAnalysis
             mHetNormalEvidence.add(sample, additionalHetNormal);
         }
 
+        AMB_LOGGER.warn("unfilteredLoci.size: {}", unfilteredLoci.size());
+        AMB_LOGGER.warn("primaryHeterozygousLoci.size: {}", primaryHeterozygousLoci.size());
+        AMB_LOGGER.warn("mConfig.WriteUnfilteredGermline: {}", mConfig.WriteUnfilteredGermline);
         if(mConfig.WriteUnfilteredGermline)
             mHeterozygousLoci = unfilteredLoci;
         else
