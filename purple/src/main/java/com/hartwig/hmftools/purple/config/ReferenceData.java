@@ -249,24 +249,24 @@ public class ReferenceData
     {
         RefGenomeCoordinates coordinates =
                 RefGenVersion.getRefGenomeCoordinates();
-        PPL_LOGGER.debug("coordinates.Lengths: {}", coordinates.Lengths.size());
+        PPL_LOGGER.info("coordinates.Lengths: {}", coordinates.Lengths.size());
         for (Chromosome chromosome: coordinates.Lengths.keySet()){
-            PPL_LOGGER.debug("\t {}: {}", chromosome.toString(),
+            PPL_LOGGER.info("\t {}: {}", chromosome.toString(),
                     coordinates.Lengths.get(chromosome));
         }
         PPL_LOGGER.debug("coordinates.Centromeres: {}", coordinates.Centromeres.size());
         for (Chromosome chromosome: coordinates.Centromeres.keySet()){
-            PPL_LOGGER.debug("\t {}: {}", chromosome.toString(),
+            PPL_LOGGER.info("\t {}: {}", chromosome.toString(),
                     coordinates.Centromeres.get(chromosome));
         }
 
         for(HumanChromosome chromosome : HumanChromosome.values())
         {
-            PPL_LOGGER.debug("working on chromosome {}", chromosome);
+            PPL_LOGGER.info("working on chromosome {}", chromosome);
             String chrStr = RefGenVersion.versionedChromosome(chromosome.toString());
-            PPL_LOGGER.debug("working on versioned chromosome {}", chrStr);
+            PPL_LOGGER.info("working on versioned chromosome {}", chrStr);
             ChromosomeLengths.put(chromosome, GenomePositions.create(chrStr, coordinates.Lengths.get(chromosome)));
-            PPL_LOGGER.debug("working on versioned chromosome {}", chrStr);
+            PPL_LOGGER.info("working on versioned chromosome {}", chrStr);
             Centromeres.put(chromosome, GenomePositions.create(chrStr, coordinates.Centromeres.get(chromosome)));
         }
     }
