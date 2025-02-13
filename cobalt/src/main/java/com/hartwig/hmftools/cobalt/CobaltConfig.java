@@ -77,7 +77,8 @@ public class CobaltConfig
     public String TumorOnlyDiploidBed;
 
     @Parameter(names = "-target_region",
-               description = "Input tsv file for genome regions enrichment in targeted mode")
+               description = "Input " +
+                       "tsv file for genome regions enrichment in targeted mode")
     public String TargetRegionPath;
 
     @Parameter(names = "-pcf_gamma",
