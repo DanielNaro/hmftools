@@ -7,10 +7,8 @@ import static com.hartwig.hmftools.common.utils.file.FileWriterUtils.createGzipB
 import static com.hartwig.hmftools.common.utils.file.FileWriterUtils.createGzipBufferedWriter;
 import static com.hartwig.hmftools.common.utils.file.FileReaderUtils.createFieldsIndexMap;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.zip.GZIPOutputStream;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -180,7 +179,32 @@ public final class CobaltRatioFile
     {
         List<CobaltRatio> sorted = new ArrayList<>(ratios);
         Collections.sort(sorted);
-        try(Writer writer = createGzipBufferedWriter(fileName))
+        try(
+                OutputStream fileOutputStream = new FileOutputStream(fileName);
+                OutputStream outputStream =
+                        new GZIPOutputStream(fileOutputStream);
+                OutputStreamWriter compressedStream =
+                        new OutputStreamWriter(outputStream,
+                        StandardCharsets.UTF_8);
+                Writer writer =
+                        new BufferedWriter(compressedStream);
+        )
+        {
+            for(String line : toLines(sorted))
+            {
+                writer.write(line + '\n');
+            }
+        }
+
+        try(
+                OutputStream fileOutputStream =
+                        new FileOutputStream(fileName.replace(".gz",".test"));
+                OutputStreamWriter compressedStream =
+                        new OutputStreamWriter(fileOutputStream,
+                                StandardCharsets.UTF_8);
+                Writer writer =
+                        new BufferedWriter(compressedStream);
+        )
         {
             for(String line : toLines(sorted))
             {
